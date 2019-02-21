@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Currency Converter</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar__container">
+        <ul>
+          <li class="navbar__view navbar__view--selected" id="rates__content">Rates</li>
+          <li class="navbar__view" id="converter__content">Converter</li>
+          <li class="navbar__view" id="settings__content">Settings</li>
+        </ul>
+    </div>
+  </nav>
+
+  <div class="app-content rates__content">
+    <div class="app-content__container">
+      <div class="caption"></div>
+      <div class="rates">
+        <table class="rates__table">
+          <thead>
+            <tr>
+              <th class="currency-col">Currency</th>
+              <th class="code-col">Code</th>
+              <th class="rate-col">Rate</th>
+            </tr>
+          </thead>
+          <tbody class="rates-table__body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-content converter__content">
+    <div class="app-content__container">
+      <div class="converter">
+        <div class="converter__box">
+          <div class="converter__input">
+            <label for="amount" min="0">Amount</label>
+            <input type="number" name="amount" id="amount">
+          </div>
+          <div class="converter__input">
+            <label for="from">From</label>
+            <select id="currencies-from"></select>
+          </div>
+          <span class="converter__icon"><i class="fas fa-exchange-alt"></i></span>
+          <div class="converter__input">
+            <label for="to">To</label>
+            <select id="currencies-to"></select>
+          </div>
+          <button class="btn converter__calculate-btn" >Calculate</button>
+        </div>
+        <div class="result"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-content settings__content">
+    <div class="app-content__container">
+      <div class="settings">
+        <div class="settings__select-rates">
+          <h4>Available currencies to be displayed in Rates view:</h4>
+          <div class="settings__checkbox-list"></div>
+          <div class="settings__bottom"></div>
+          <button class="btn settings__save-btn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/index.js"></script>
+</body>
+</html>
