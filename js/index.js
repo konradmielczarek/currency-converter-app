@@ -339,6 +339,13 @@ const UIController = (() => {
       });
     },
 
+    controlUpdateRatesBtn: (disable) => {
+      const {updateRatesBtn} = domStrings;
+
+      if (disable === true) updateRatesBtn.disabled = true;
+      if (disable === false) updateRatesBtn.disabled = false;
+    },
+
     getInputs: () => {
       let {currencyFromList, currencyToList, amountInput} = domStrings;
       const fromCode = getCode(currencyFromList);
@@ -430,6 +437,7 @@ const AppController = ((ratesCtrl, uiCtrl) => {
     setTimeout(() => {
       uiCtrl.insertRatesToUI(state.dataToBeDisplayed, state.baseCurrency);
       uiCtrl.removeLoader();
+      uiCtrl.controlUpdateRatesBtn(false); // Enable update rates button back
       displayStartView();
     }, 1500);
   }
@@ -461,22 +469,25 @@ const AppController = ((ratesCtrl, uiCtrl) => {
   }
 
   const updateRates = async () => {
-    // 1. Display loader after clicking the button
+    // 1. Disable update rates button
+    uiCtrl.controlUpdateRatesBtn(true);
+
+    // 2. Display loader after clicking the button
     uiCtrl.renderLoader();
 
-    // 2. Clear table body 
+    // 3. Clear table body 
     uiCtrl.clearTableBody();
 
-    // 3. Retrieve new data from API
+    // 4. Retrieve new data from API
     await retrieveData();
 
-    // 4. Mark currencies in settings as checked basing on selected currencies info from state object
+    // 5. Mark currencies in settings as checked basing on selected currencies info from state object
     uiCtrl.checkCurrencies(state.selectedCurrenciesInSettings);
 
-    // 5. Get these selected currencies from settings
+    // 6. Get these selected currencies from settings
     getSelectedCurrencies();
 
-    // 6. Display rates selected in settings view 
+    // 7. Display rates selected in settings view. Update rates btn is being disabled in that function
     displayRates();
   }
 
