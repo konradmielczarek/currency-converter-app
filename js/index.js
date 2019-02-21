@@ -100,6 +100,7 @@ const UIController = (() => {
     loaderDiv: document.querySelector('.loader'),
     appContentContainer: document.querySelector('.app-content__container'),
     // Converter content
+    lastConversionsDiv: document.querySelector('.converter__last-conversions'),
     firstConverterInput: document.querySelector('.converter__input'),
     currencyFromList: document.getElementById('currencies-from'),
     currencyToList: document.getElementById('currencies-to'),
@@ -288,6 +289,7 @@ const UIController = (() => {
       ratesArr.forEach(cur => {
         const option = document.createElement('option');
         option.textContent = `${cur.code} | ${cur.name}`;
+        option.value = cur.code;
         type === 'from' ? currencyFromList.appendChild(option) : currencyToList.appendChild(option);
       })
     },
@@ -309,6 +311,61 @@ const UIController = (() => {
 
       currencyFromList.value = toValue;
       currencyToList.value = fromValue;
+    },
+
+    displayLastConversions: convArr => {
+      const {lastConversionsDiv} = domStrings;
+
+      lastConversionsDiv.innerHTML = '';
+
+      if (!convArr) {
+        lastConversionsDiv.innerHTML = 'Your last five conversions will be saved here. Use the shortcuts to make converting faster.';
+      } else {
+        convArr.forEach(el => {
+          const html = `
+            <div class="btn converter__conversion-btn" data-from="${el.fromValue}" data-to="${el.toValue}">${el.fromValue} -> ${el.toValue}<i class="fas fa-times"></i></div>
+          `;
+
+          lastConversionsDiv.insertAdjacentHTML('afterbegin', html);
+        });
+      }
+    },
+
+    removeConversion: e => {
+      const {lastConversionsDiv} = domStrings;
+      const clickedConversion = e.target.parentElement;
+      const clickedConversionData = {
+        from: clickedConversion.dataset.from,
+        to: clickedConversion.dataset.to
+      };
+      
+      if (clickedConversion.classList.contains('converter__conversion-btn')) {
+        clickedConversion.remove();
+
+        if (lastConversionsDiv.children.length === 0) {
+          lastConversionsDiv.innerHTML = `<p class="converter__no-conversions-txt">Your last five conversions will be saved here when you start converting. Use the shortcuts then to make converting faster!</p>`;
+        }
+        
+        return clickedConversionData;
+      }
+    },
+
+    setConversionData: e => {
+      const clickedBtn = e.target;
+      const {currencyFromList, currencyToList} = domStrings;
+
+      if (clickedBtn.classList.contains('converter__conversion-btn')) {
+        const fromValue = clickedBtn.dataset.from;
+        const toValue = clickedBtn.dataset.to;
+
+        [...currencyFromList].forEach(el => {
+          if (fromValue === el.value) currencyFromList.value = fromValue;
+        });
+
+        [...currencyToList].forEach(el => {
+          if (toValue === el.value) currencyToList.value = toValue;
+        });
+      }
     },
 
     clearResult: () => {
@@ -339,11 +396,11 @@ const UIController = (() => {
       });
     },
 
-    controlUpdateRatesBtn: (disable) => {
-      const {updateRatesBtn} = domStrings;
+    controlBtn: (disable, btnClass) => {
+      const btn = document.querySelector(`.${btnClass}`);
 
-      if (disable === true) updateRatesBtn.disabled = true;
-      if (disable === false) updateRatesBtn.disabled = false;
+      if (disable === true) btn.disabled = true;
+      if (disable === false) btn.disabled = false;
     },
 
     getInputs: () => {
@@ -387,6 +444,19 @@ const AppController = ((ratesCtrl, uiCtrl) => {
     dom.changeBtn.addEventListener('click', uiCtrl.changeConverterValues);
 
     dom.updateRatesBtn.addEventListener('click', updateRates);
+
+    dom.calculateBtn.addEventListener('click', logConversions);
+
+    dom.lastConversionsDiv.addEventListener('click', e => {
+      uiCtrl.setConversionData(e);
+    });
+
+    dom.lastConversionsDiv.addEventListener('click', e => {
+      const conversionData = uiCtrl.removeConversion(e);
+      if (conversionData) {
+        removeConversionFromState(conversionData);
+      }
+    });
   }
 
   const state = {
@@ -395,7 +465,8 @@ const AppController = ((ratesCtrl, uiCtrl) => {
     preparedData: {},
     selectedCurrenciesInSettings: [],
     dataToBeDisplayed: [],
-    converterInput: {}
+    converterInput: {},
+    lastConversions: []
   };
 
   const getSelectedCurrencies = () => {
@@ -406,6 +477,51 @@ const AppController = ((ratesCtrl, uiCtrl) => {
   const prepareConverter = rates => {
     uiCtrl.fillDataLists(rates, 'from');
     uiCtrl.fillDataLists(rates, 'to');
+  }
+
+  const logConversions = () => {
+    const {converterInput, lastConversions} = state;
+    
+    if (converterInput.amount > 0) { // Test if given amount is greater than 0
+      if (lastConversions.length === 0) {
+        lastConversions.push(converterInput); // Always push input to array if array is empty
+        uiCtrl.displayLastConversions(lastConversions);
+
+      } else if (lastConversions.length > 0) { // If not, get last array item, compare it to input and don't add same item to array
+        let isRepeated = false;
+
+        for (let i = 0; i < lastConversions.length; i++) {
+          const el = lastConversions[i];
+
+          if (el.fromValue === converterInput.fromValue && el.toValue === converterInput.toValue) {
+            isRepeated = true;
+            break;
+          } else {
+            isRepeated = false;
+          }
+        }
+
+        if (isRepeated === false) {
+          lastConversions.push(converterInput);
+
+          if (lastConversions.length > 5) lastConversions.shift(); // Remove first array item when it's bigger than 5 elements
+          uiCtrl.displayLastConversions(lastConversions);
+        }
+      }
+    }
+  }
+
+  const removeConversionFromState = conversionData => {
+    const {from, to} = conversionData;
+    const {lastConversions} = state;
+
+    lastConversions.forEach(el => {
+      if (el.fromValue === from && el.toValue === to) { // Find removed conversion from UI in lastConversions array
+        const index = lastConversions.indexOf(el); //Find index of that found element in lastConversions array
+
+        lastConversions.splice(index, 1); // Remove that element from the array
+      }
+    });
   }
 
   const retrieveData = async () => {
@@ -437,7 +553,7 @@ const AppController = ((ratesCtrl, uiCtrl) => {
     setTimeout(() => {
       uiCtrl.insertRatesToUI(state.dataToBeDisplayed, state.baseCurrency);
       uiCtrl.removeLoader();
-      uiCtrl.controlUpdateRatesBtn(false); // Enable update rates button back
+      uiCtrl.controlBtn(false, 'rates__update-rates-btn'); // Enable update rates button back
       displayStartView();
     }, 1500);
   }
@@ -455,13 +571,15 @@ const AppController = ((ratesCtrl, uiCtrl) => {
 
     // 2. Validate inputs and go through converting
     if (fromValue && toValue && amount > 0) {
-      state.converterResult =  ratesCtrl.convert(state.preparedData, fromValue, toValue, amount);
+      state.converterResult = ratesCtrl.convert(state.preparedData, fromValue, toValue, amount);
       uiCtrl.clearResult();
       uiCtrl.renderLoader('converter');
+      uiCtrl.controlBtn(true, 'converter__calculate-btn');
 
       setTimeout(() => {
         uiCtrl.removeLoader();
         uiCtrl.displayResult(state.converterInput, state.converterResult);
+        uiCtrl.controlBtn(false, 'converter__calculate-btn');
       }, 1500);
     } else {
       uiCtrl.renderValidationError();
@@ -470,7 +588,7 @@ const AppController = ((ratesCtrl, uiCtrl) => {
 
   const updateRates = async () => {
     // 1. Disable update rates button
-    uiCtrl.controlUpdateRatesBtn(true);
+    uiCtrl.controlBtn(true, 'rates__update-rates-btn');
 
     // 2. Display loader after clicking the button
     uiCtrl.renderLoader();
