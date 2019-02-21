@@ -324,7 +324,7 @@ const UIController = (() => {
       return {
         fromValue: fromCode,
         toValue: toCode,
-        amount: parseInt(amountInput.value)
+        amount: parseFloat(amountInput.value).toFixed(2)
       }
     }
   }
