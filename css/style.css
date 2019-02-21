@@ -12,6 +12,7 @@
   border: none;
   cursor: pointer;
   outline: none;
+  font-size: 0.9em;
 }
 
 /* NAVBAR */
@@ -75,8 +76,13 @@ nav ul {
 /* RATES CONTENT */
 
 .caption {
-  text-align: center;
+  display: flex;
+  justify-content: center;
   margin-bottom: 50px;
+}
+
+.app-content__caption {
+  text-align: center;
 }
 
 .rates {
@@ -87,7 +93,7 @@ nav ul {
 }
 
 .rates__table {
-  width: 60%;
+  /* width: 1000px; */
   border-collapse: collapse;
 }
 
@@ -100,15 +106,15 @@ nav ul {
 }
 
 th.currency-col {
-  width: 65%;
+  width: 500px;
 }
 
 th.code-col {
-  width: 10%;
+  width: 80px;
 }
 
 th.rate-col {
-  width: 10%;
+  width: 100px;
 }
 
 th.code-col,
@@ -180,7 +186,6 @@ td.rate {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 40px;
 }
 
 .converter__input {
@@ -238,37 +243,59 @@ td.rate {
 
 /* SETTINGS CONTENT */
 
+i {
+  padding: 6px;
+}
+
 .settings__content {
   display: none;
 }
-
-.settings__select-rates {
-  padding: 20px;
-  font-size: 0.9em;
-  width: 420px;
+.settings {
+  display: flex;
+  justify-content: space-between;
 }
 
-.settings__select-rates h3 {
-  border-bottom: 1px solid #cccccc;
+.settings__select-rates {
+  width: 420px;
 }
 
 .settings__checkbox-list {
   margin: 10px 0 20px;
   display: flex;
   flex-direction: column;
+  font-size: 0.9em;
 }
 
 .settings__checkbox {
   margin: 6px 4px 0 0;
-  font-size: 0.9em;
+}
+
+.settings__buttons {
+  margin-bottom: 30px;
 }
 
 .settings__save-btn { 
-  background-color: #8ce0bd; 
-  margin-right: 6px;
+  background-color: #5edf8f; 
+  margin: 0 10px 10px 0;
 }
+
 .settings__save-btn:hover { background-color: #7dcaaa; }
 .settings__save-btn:active { background-color: #a6d8c3; }
+
+#saved-info {
+  font-size: 0.8em;
+}
+
+.settings__check-all-btn {
+  background-color: #fabf53;
+  margin-right: 10px;
+}
+
+.settings__check-all-btn:hover { background-color: #e2ad4b; }
+.settings__check-all-btn:active { background-color: #ffd079; }
+
+.settings__uncheck-all-btn:hover { background-color: #cacaca; }
+.settings__uncheck-all-btn:active { background-color: #e0e0e0; }
 
 /* MEDIA QUERIES */
 
@@ -279,7 +306,7 @@ td.rate {
   }
 }
 
-@media screen and (max-width: 1020px) {
+@media screen and (max-width: 1100px) {
   .navbar__container,
   .app-content__container {
     width: 800px;
@@ -295,21 +322,29 @@ td.rate {
   }
 }
 
-@media screen and (max-width: 820px) {
+@media screen and (max-width: 890px) {
   .navbar__container,
   .app-content__container {
     width: 600px;
   }
+
+  .settings {
+    flex-direction: column-reverse;
+  }
 }
 
-@media screen and (max-width: 620px) {
+@media screen and (max-width: 700px) {
   .navbar__container {
     width: 400px;
   }
 
   .app-content__container {
     width: 400px;
-    font-size: 0.8em;
+  }
+
+  .rates__table {
+    width: 90%;
+    font-size: 0.9em;
   }
 }
 
@@ -324,6 +359,33 @@ td.rate {
 
   .app-content__container {
     width: 400px;
+  }
+
+  .app-content__caption {
+    width: 80%;
+  }
+
+  .settings {
+    align-items: center;
+  }
+
+  .settings__select-rates {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .settings__select-rates h4 {
+    text-align: center;
+  }
+
+  .settings__checkbox-list {
     font-size: 0.8em;
+  }
+
+  .settings__buttons {
+    display: flex;
+    justify-content: center;
   }
 }

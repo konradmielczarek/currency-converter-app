@@ -108,7 +108,9 @@ const UIController = (() => {
     // Settings content
     saveBtn: document.querySelector('.settings__save-btn'),
     checkboxList: document.querySelector('.settings__checkbox-list'),
-    selectRatesDiv: document.querySelector('.settings__select-rates')
+    selectRatesDiv: document.querySelector('.settings__select-rates'),
+    checkAllBtn: document.querySelector('.settings__check-all-btn'),
+    uncheckAllBtn: document.querySelector('.settings__uncheck-all-btn')
   };
 
   const getCode = currency => {
@@ -161,7 +163,7 @@ const UIController = (() => {
           <tr>
             <td class="name">${el.name}</td>
             <td class="code">${el.code}</td>
-            <td class="rate">${el.rate}</td>
+            <td class="rate">${el.rate.toFixed(4)}</td>
           </tr>
         `;
     
@@ -202,6 +204,12 @@ const UIController = (() => {
     checkCurrencies: checkedArr => {
       const checkbox = document.querySelectorAll('.settings__checkbox');
 
+      // 1. Clear settings firstly
+      [...checkbox].forEach(el => {
+        el.checked = false;
+      });
+
+      // 2. Check which currencies were saved before and check them again
       [...checkbox].forEach(checkVal => {
         checkedArr.forEach(elVal => {
           if(checkVal.value === elVal) {
@@ -292,6 +300,22 @@ const UIController = (() => {
       resultDiv.innerHTML = '';
     },
 
+    checkAllCurrencies: () => {
+      const checkbox = document.querySelectorAll('.settings__checkbox');
+
+      [...checkbox].forEach(el => {
+        el.checked = true;
+      });
+    },
+
+    uncheckAllCurrencies: () => {
+      const checkbox = document.querySelectorAll('.settings__checkbox');
+
+      [...checkbox].forEach(el => {
+        el.checked = false;
+      });
+    },
+
     getInputs: () => {
       let {currencyFromList, currencyToList, amountInput} = domStrings;
       const fromCode = getCode(currencyFromList);
@@ -315,6 +339,9 @@ const AppController = ((ratesCtrl, uiCtrl) => {
 
     dom.navbarContainer.addEventListener('click', e => {
       uiCtrl.changeView(e);
+      if (e.target.id === 'settings__content') {
+        uiCtrl.checkCurrencies(state.selectedCurrenciesInSettings);
+      }
     });
 
     dom.saveBtn.addEventListener('click', () => {
@@ -322,6 +349,10 @@ const AppController = ((ratesCtrl, uiCtrl) => {
       displayRates();
       uiCtrl.renderSavedInfo();
     });
+
+    dom.checkAllBtn.addEventListener('click', uiCtrl.checkAllCurrencies);
+
+    dom.uncheckAllBtn.addEventListener('click', uiCtrl.uncheckAllCurrencies);
   }
 
   const state = {
