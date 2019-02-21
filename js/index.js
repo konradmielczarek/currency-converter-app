@@ -103,6 +103,7 @@ const UIController = (() => {
     currencyFromList: document.getElementById('currencies-from'),
     currencyToList: document.getElementById('currencies-to'),
     amountInput: document.getElementById('amount'),
+    changeBtn: document.querySelector('.converter__change-btn'),
     calculateBtn: document.querySelector('.converter__calculate-btn'),
     resultDiv: document.querySelector('.result'),
     // Settings content
@@ -294,6 +295,15 @@ const UIController = (() => {
       `;
     },
 
+    changeConverterValues: () => {
+      const {currencyFromList, currencyToList} = domStrings;
+      const fromValue = currencyFromList.value;
+      const toValue = currencyToList.value;
+
+      currencyFromList.value = toValue;
+      currencyToList.value = fromValue;
+    },
+
     clearResult: () => {
       const {resultDiv} = domStrings;
 
@@ -324,7 +334,7 @@ const UIController = (() => {
       return {
         fromValue: fromCode,
         toValue: toCode,
-        amount: parseInt(amountInput.value)
+        amount: parseFloat(amountInput.value).toFixed(2)
       }
     }
   }
@@ -353,6 +363,8 @@ const AppController = ((ratesCtrl, uiCtrl) => {
     dom.checkAllBtn.addEventListener('click', uiCtrl.checkAllCurrencies);
 
     dom.uncheckAllBtn.addEventListener('click', uiCtrl.uncheckAllCurrencies);
+
+    dom.changeBtn.addEventListener('click', uiCtrl.changeConverterValues);
   }
 
   const state = {

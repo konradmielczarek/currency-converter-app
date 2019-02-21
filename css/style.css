@@ -205,9 +205,13 @@ td.rate {
   border: 1px solid #ff3737;
 }
 
-.converter__icon {
-  padding: 10px;
+.converter__change-btn {
+  width: 30px;
+  background-color: #ffe261;
 }
+
+.converter__change-btn:hover { background-color: #eed35a; }
+.converter__change-btn:active { background-color: #ffea8b; }
 
 .converter__input input,
 .converter__input select {
@@ -218,11 +222,11 @@ td.rate {
 }
 
 .converter__calculate-btn { 
-  background-color: #ffe261; 
+  background-color: #fabf53; 
   margin: 30px;
 }
-.converter__calculate-btn:hover { background-color: #eed35a; }
-.converter__calculate-btn:active { background-color: #ffea8b; }
+.converter__calculate-btn:hover { background-color: #e2ad4b; }
+.converter__calculate-btn:active { background-color: #ffd079; }
 
 .result {
   display: flex;
