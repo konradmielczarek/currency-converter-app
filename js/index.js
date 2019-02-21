@@ -94,6 +94,7 @@ const UIController = (() => {
     // Rates content
     captionDiv: document.querySelector('.caption'),
     ratesDiv: document.querySelector('.rates'),
+    updateRatesBtn: document.querySelector('.rates__update-rates-btn'),
     ratesTable: document.querySelector('.rates__table'),
     ratesTableBody: document.querySelector('.rates-table__body'),
     loaderDiv: document.querySelector('.loader'),
@@ -142,11 +143,13 @@ const UIController = (() => {
 
         document.querySelector('.' + clickedTab).style.display = 'block';
         e.target.className = e.target.className.replace('navbar__view', 'navbar__view navbar__view--selected');
+
+        window.scrollTo(0, 0);
       }
     },
 
     insertRatesToUI: (chosenCurrencies, baseCurrency) => {
-      const {ratesTable, ratesTableBody, captionDiv} = domStrings;
+      const {ratesTable, ratesTableBody, captionDiv, updateRatesBtn} = domStrings;
       const baseCurrInfo = `
         <div class="app-content__caption">
           Presented rates have been calculated for 1 ${baseCurrency} as base currency.
@@ -154,6 +157,7 @@ const UIController = (() => {
       `;
       
       ratesTable.style.display = 'block';
+      updateRatesBtn.style.display = 'block';
       ratesTableBody.innerHTML = '';
       captionDiv.innerHTML = '';
       captionDiv.insertAdjacentHTML('afterbegin', baseCurrInfo);
@@ -242,7 +246,7 @@ const UIController = (() => {
     },
 
     renderStartView: () => {
-      const {captionDiv, ratesTable} = domStrings;
+      const {captionDiv, ratesTable, updateRatesBtn} = domStrings;
       const startText = `
         <div class="app-content__caption">
         Go to Settings and select the currencies you are interested in.
@@ -252,6 +256,7 @@ const UIController = (() => {
       captionDiv.innerHTML = '';
       captionDiv.insertAdjacentHTML('afterbegin', startText);
       ratesTable.style.display = 'none';
+      updateRatesBtn.style.display = 'none';
     },
 
     renderLoader: (place) => {
@@ -310,6 +315,12 @@ const UIController = (() => {
       resultDiv.innerHTML = '';
     },
 
+    clearTableBody: () => {
+      const {ratesTableBody} = domStrings;
+
+      ratesTableBody.innerHTML = '';
+    },
+
     checkAllCurrencies: () => {
       const checkbox = document.querySelectorAll('.settings__checkbox');
 
@@ -365,6 +376,8 @@ const AppController = ((ratesCtrl, uiCtrl) => {
     dom.uncheckAllBtn.addEventListener('click', uiCtrl.uncheckAllCurrencies);
 
     dom.changeBtn.addEventListener('click', uiCtrl.changeConverterValues);
+
+    dom.updateRatesBtn.addEventListener('click', updateRates);
   }
 
   const state = {
@@ -402,13 +415,16 @@ const AppController = ((ratesCtrl, uiCtrl) => {
   }
 
   const displayRates = () => {
-    // 1. Display loader before receiving data from API
-    uiCtrl.renderLoader();
+    // 1. Clear table body
+    uiCtrl.clearTableBody();
 
-    // 2. Mark selected currencies in settings again after view cleaning
+    // 2. Display loader before receiving data from API if it's not exist in document already
+    if (!document.querySelector('.loader')) uiCtrl.renderLoader();
+
+    // 3. Mark selected currencies in settings again after view cleaning
     uiCtrl.checkCurrencies(state.selectedCurrenciesInSettings);
 
-    // 3. Insert data into UI and remove loader when data is displayed
+    // 4. Insert data into UI and remove loader when data is displayed
     setTimeout(() => {
       uiCtrl.insertRatesToUI(state.dataToBeDisplayed, state.baseCurrency);
       uiCtrl.removeLoader();
@@ -440,6 +456,26 @@ const AppController = ((ratesCtrl, uiCtrl) => {
     } else {
       uiCtrl.renderValidationError();
     }
+  }
+
+  const updateRates = async () => {
+    // 1. Display loader after clicking the button
+    uiCtrl.renderLoader();
+
+    // 2. Clear table body 
+    uiCtrl.clearTableBody();
+
+    // 3. Retrieve new data from API
+    await retrieveData();
+
+    // 4. Mark currencies in settings as checked basing on selected currencies info from state object
+    uiCtrl.checkCurrencies(state.selectedCurrenciesInSettings);
+
+    // 5. Get these selected currencies from settings
+    getSelectedCurrencies();
+
+    // 6. Display rates selected in settings view 
+    displayRates();
   }
 
   return {
