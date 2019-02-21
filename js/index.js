@@ -283,6 +283,8 @@ const UIController = (() => {
     fillDataLists: (ratesArr, type) => {
       const {currencyFromList, currencyToList} = domStrings;
 
+      type === 'from' ? currencyFromList.innerHTML = '' : currencyToList.innerHTML = '';
+
       ratesArr.forEach(cur => {
         const option = document.createElement('option');
         option.textContent = `${cur.code} | ${cur.name}`;
@@ -394,7 +396,7 @@ const AppController = ((ratesCtrl, uiCtrl) => {
     state.dataToBeDisplayed = ratesCtrl.filterDataToBeDisplayed(state.preparedData, state.selectedCurrenciesInSettings);
   }
 
-  const prepareConverter = (rates) => {
+  const prepareConverter = rates => {
     uiCtrl.fillDataLists(rates, 'from');
     uiCtrl.fillDataLists(rates, 'to');
   }
