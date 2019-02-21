@@ -367,7 +367,11 @@ td.rate {
   }
 
   .navbar__container {
-    width: 400px;
+    width: 100%;
+  }
+
+  .navbar__view {
+    width: 33.333333%;
   }
 
   .app-content__container {
