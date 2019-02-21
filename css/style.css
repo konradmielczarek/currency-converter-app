@@ -6,13 +6,18 @@
 }
 
 .btn {
-  width: 120px;
   height: 30px;
   border-radius: 2px;
   border: none;
   cursor: pointer;
   outline: none;
   font-size: 0.9em;
+  padding: 0 10px;
+  text-align: center;
+}
+
+i {
+  padding: 4px;
 }
 
 /* NAVBAR */
@@ -78,7 +83,7 @@ nav ul {
 .caption {
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .app-content__caption {
@@ -91,6 +96,10 @@ nav ul {
   flex-direction: column;
   text-align: center;
 }
+
+.rates__update-rates-btn { margin-bottom: 20px; }
+.rates__update-rates-btn:hover { background-color: #cacaca; }
+.rates__update-rates-btn:active { background-color: #e0e0e0; }
 
 .rates__table {
   /* width: 1000px; */
@@ -206,8 +215,12 @@ td.rate {
 }
 
 .converter__change-btn {
-  width: 30px;
+  font-size: 0.8em;
   background-color: #ffe261;
+}
+
+.converter__change-btn i {
+  padding: 0;
 }
 
 .converter__change-btn:hover { background-color: #eed35a; }
@@ -246,10 +259,6 @@ td.rate {
 }
 
 /* SETTINGS CONTENT */
-
-i {
-  padding: 6px;
-}
 
 .settings__content {
   display: none;
